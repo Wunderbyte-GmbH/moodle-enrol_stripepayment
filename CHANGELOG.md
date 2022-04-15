@@ -1,5 +1,8 @@
 ##Stripe Payment Moodle Plugin Change Log
 
+3.3.3 (2022041500)
+* Fixed bug where no timeupdated was stored in DB
+
 3.3.2 (2022032402)
  * Added compatibility of Moodle 3.11.6+.
  * Fixed error on the plugin settings page.
@@ -9,18 +12,18 @@
  * Fixed New error upon adding the plugin #86
  * Fixed error on the plugin settings page.
  * Added Some Country on the list
- 
+
 3.3.0 (2021080601)
  * Make the plugin Moodle Stanard
  * Fixed the plugin settings page.
- 
+
 3.2.1 (2020121401)
  * Fixed the issue of wrong variable causing critical bug
  * Fixed the issue of full price taken by stripe upon payment using a coupon.
 
 3.2 (202010270200)
  * Fixing the issue of payments record not getting through stripe dashboard
- * Changed the Course Stripe Enrolment Setting 
+ * Changed the Course Stripe Enrolment Setting
 
 3.1 (2020102001)
  * Showing the Stripe error code on unsuccessful payment
