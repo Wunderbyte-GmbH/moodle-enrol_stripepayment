@@ -486,6 +486,7 @@ class moodle_enrol_stripepayment_external extends external_api {
         $data->instanceid = $instance_id;
         $data->userid = (int)$user_id;
 
+        $data->timeupdated = time();
         if (! $user = $DB->get_record("user", array("id" => $data->userid))) {
             self::message_stripepayment_error_to_admin("Not a valid user id", $data);
             redirect($CFG->wwwroot);
