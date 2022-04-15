@@ -12,7 +12,7 @@ class moodle_enrol_stripepayment_external extends external_api {
                 'courseid' => new external_value(PARAM_RAW, 'Update course id'),
                 'secret_key' => new external_value(PARAM_RAW, 'Update secret key'),
                 'get_cost_from_plugin' => new external_value(PARAM_RAW, 'Update data cost')
-            )    
+            )
         );
     }
 
@@ -33,7 +33,7 @@ class moodle_enrol_stripepayment_external extends external_api {
         $couponid = $coupon_id;
         $courseid = $courseid;
         $plugininstance = $DB->get_record("enrol", array("enrol" => 'stripepayment', "status" => 0, 'courseid' => $courseid));
-        
+
         if ( (float) $plugininstance->cost <= 0 ) {
             $cost = ( float ) $get_cost_from_plugin;
         } else {
@@ -64,7 +64,7 @@ class moodle_enrol_stripepayment_external extends external_api {
         return $result;
         die;
     }
-    
+
     public static function stripepayment_free_enrolsettings_parameters() {
         return new external_function_parameters(
             array(
@@ -276,7 +276,7 @@ class moodle_enrol_stripepayment_external extends external_api {
         if (is_enrolled($context, null, '', true)) { // TODO: use real stripe check.
             redirect($destination, 'Thankyou! Now you are enrolled into the course "'.$fullname.'"');
 
-        } else {   
+        } else {
                 // Somehow they aren't enrolled yet!
                 $PAGE->set_url($destination);
                 echo $OUTPUT->header();
@@ -358,7 +358,7 @@ class moodle_enrol_stripepayment_external extends external_api {
                 'couponid' => new external_value(PARAM_RAW, 'Update coupon id'),
                 'user_id' => new external_value(PARAM_RAW, 'Update user id'),
                 'instance_id' => new external_value(PARAM_RAW, 'Update instance id')
-            )    
+            )
         );
     }
 
@@ -381,57 +381,57 @@ class moodle_enrol_stripepayment_external extends external_api {
         if (empty($secretkey) || empty($courseid) || empty($amount) || empty($currency) || empty($description)) {
             redirect($CFG->wwwroot.'/course/view.php?id='.$courseid);
         } else {
-            // Set API key 
-            \Stripe\Stripe::setApiKey($secretkey); 
+            // Set API key
+            \Stripe\Stripe::setApiKey($secretkey);
 
-            $response = array( 
-                'status' => 0, 
-                'error' => array( 
-                    'message' => 'Invalid Request!'    
-                ) 
+            $response = array(
+                'status' => 0,
+                'error' => array(
+                    'message' => 'Invalid Request!'
+                )
             );
-            // Create new Checkout Session for the order 
+            // Create new Checkout Session for the order
             try {
-                $session = \Stripe\Checkout\Session::create([ 
-                    'payment_method_types' => ['card'], 
-                    'line_items' => [[ 
-                        'price_data' => [ 
-                            'product_data' => [ 
-                                'name' => $description, 
-                                'metadata' => [ 
-                                    'pro_id' => $courseid 
+                $session = \Stripe\Checkout\Session::create([
+                    'payment_method_types' => ['card'],
+                    'line_items' => [[
+                        'price_data' => [
+                            'product_data' => [
+                                'name' => $description,
+                                'metadata' => [
+                                    'pro_id' => $courseid
                                 ]
                             ],
-                            'unit_amount' => $amount, 
-                            'currency' => $currency, 
+                            'unit_amount' => $amount,
+                            'currency' => $currency,
                         ],
-                        'quantity' => 1, 
-                        'description' => $description, 
+                        'quantity' => 1,
+                        'description' => $description,
                     ]],
                     'mode' => 'payment',
                     'success_url' => $CFG->wwwroot.'/webservice/rest/server.php?wstoken=' .$user_token. '&wsfunction=moodle_stripepayment_success_stripe_url&moodlewsrestformat=json&session_id={CHECKOUT_SESSION_ID}&courseid=' .$courseid. '&couponid=' .$couponid. '&user_id=' .$user_id. '&instance_id=' .$instance_id. '',
-                    'cancel_url' => $CFG->wwwroot.'/course/view.php?id='.$courseid, 
+                    'cancel_url' => $CFG->wwwroot.'/course/view.php?id='.$courseid,
                 ]);
             } catch(Exception $e) {
                 $api_error = $e->getMessage();
             }
 
-            if(empty($api_error) && $session) { 
-                $response = array( 
-                    'status' => 1, 
-                    'message' => 'Checkout Session created successfully!', 
-                    'sessionId' => $session['id'] 
-                ); 
+            if(empty($api_error) && $session) {
+                $response = array(
+                    'status' => 1,
+                    'message' => 'Checkout Session created successfully!',
+                    'sessionId' => $session['id']
+                );
 
-            } else { 
-                $response = array( 
+            } else {
+                $response = array(
                     'status' => 0,
-                    'error' => array( 
-                        'message' => 'Checkout Session creation failed! '.$api_error    
+                    'error' => array(
+                        'message' => 'Checkout Session creation failed! '.$api_error
                     )
-                ); 
+                );
             }
-            // Return response 
+            // Return response
             $pass_session_id = isset($response['sessionId']) && !empty($response['sessionId']) ? $response['sessionId'] : '';
             $result = array();
             $result['status'] = $pass_session_id;
@@ -448,7 +448,7 @@ class moodle_enrol_stripepayment_external extends external_api {
                 'couponid'  => new external_value(PARAM_RAW, 'The item id to operate coupon id'),
                 'user_id'  => new external_value(PARAM_RAW, 'The item id to operate user id'),
                 'instance_id'  => new external_value(PARAM_RAW, 'The item id to operate instance id')
-            )    
+            )
         );
     }
 
@@ -476,7 +476,7 @@ class moodle_enrol_stripepayment_external extends external_api {
         $secretkey = $plugin->get_config('secretkey');
         \Stripe\Stripe::setApiKey($secretkey);
 
-        $checkout_session = \Stripe\Checkout\Session::retrieve($session_id); 
+        $checkout_session = \Stripe\Checkout\Session::retrieve($session_id);
         $charge = \Stripe\PaymentIntent::retrieve($checkout_session->payment_intent);
 
         $data->coupon_id = $couponid;
@@ -487,6 +487,7 @@ class moodle_enrol_stripepayment_external extends external_api {
         $data->userid = (int)$user_id;
 
         $data->timeupdated = time();
+
         if (! $user = $DB->get_record("user", array("id" => $data->userid))) {
             self::message_stripepayment_error_to_admin("Not a valid user id", $data);
             redirect($CFG->wwwroot);
@@ -583,7 +584,7 @@ class moodle_enrol_stripepayment_external extends external_api {
             // Stripe Authentication Checking.
 
             $checkemail = $charge->charges->data[0]->billing_details->email;
-        
+
             // ALL CLEAR !
 
             $DB->insert_record("enrol_stripepayment", $data);
